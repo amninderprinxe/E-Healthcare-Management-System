@@ -1,17 +1,25 @@
 package doctor;
 
-import auth.User;
-import appointment.*;
-import emr.*;
-import javafx.collections.*;
-import javafx.geometry.*;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
-import java.sql.*;
 import java.util.List;
+
+import appointment.AppointmentDAO;
+import auth.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * Doctor Dashboard – view appointments, update EMR, write prescriptions.
@@ -191,7 +199,7 @@ public class DoctorDashboard {
         return box;
     }
 
-    @SuppressWarnings("unchecked")
+    
     private TableView<String[]> appointmentTable() {
         TableView<String[]> table = new TableView<>();
         String[] cols = {"ID", "Patient", "Date/Time", "Reason", "Status"};
