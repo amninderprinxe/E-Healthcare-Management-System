@@ -1,17 +1,30 @@
 package patient;
 
+import appointment.AppointmentDAO;
 import auth.User;
-import appointment.*;
-import billing.*;
-import emr.*;
-import javafx.collections.*;
-import javafx.geometry.*;
+import billing.BillingDAO;
+import emr.MedicalRecordDAO;
+import emr.PrescriptionDAO;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 /**
  * Patient Dashboard – book appointments, view prescriptions, billing.
@@ -190,6 +203,7 @@ public class PatientDashboard {
 
     private VBox buildMyAppointments() {
         VBox box = new VBox(14);
+        
         box.setPadding(new Insets(24));
         Label title = new Label("My Appointments");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #5b2d8e;");
@@ -298,7 +312,7 @@ public class PatientDashboard {
         return box;
     }
 
-    @SuppressWarnings("unchecked")
+    
     private TableView<String[]> makeTable(String[] cols) {
         TableView<String[]> table = new TableView<>();
         for (int i = 0; i < cols.length; i++) {
