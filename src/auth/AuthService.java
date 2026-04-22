@@ -4,7 +4,7 @@ import db.DatabaseConnection;
 import java.sql.*;
 
 /**
- * Handles user login using PLAIN TEXT for testing bypass.
+ * Handles user login and registration with Bypass Hashing.
  */
 public class AuthService {
 
@@ -22,7 +22,6 @@ public class AuthService {
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
                 
-                // Direct comparison (Bypass BCrypt)
                 if (plainPassword.equals(storedPassword)) {
                     User user = mapResultSet(rs);
                     currentUser = user;
@@ -36,6 +35,27 @@ public class AuthService {
         }
     }
 
+    // ── Register Method (Jo miss ho gaya si) ─────────────────────
+    public static boolean register(String username, String password, String role, 
+                                   String email, String fullName, String phone) throws Exception {
+        
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        String sql = "INSERT INTO users (username, password, role, email, full_name, phone, is_active) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, TRUE)";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, password); // Saving as plain text for now (Bypass)
+            ps.setString(3, role);
+            ps.setString(4, email);
+            ps.setString(5, fullName);
+            ps.setString(6, phone);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        }
+    }
+
     public static void logout() {
         currentUser = null;
     }
@@ -44,7 +64,6 @@ public class AuthService {
         return currentUser;
     }
 
-    // Helper to map Result Set
     private static User mapResultSet(ResultSet rs) throws SQLException {
         return new User(
             rs.getInt("user_id"),
