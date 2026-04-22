@@ -64,6 +64,23 @@ public class PatientDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    // Dashboard di 'Add Patient' quick action layi eh method chahida hai
+    public boolean addPatient(String name, int age, String phone) throws SQLException {
+        Patient p = new Patient();
+        p.setName(name);
+        p.setAge(age);
+        p.setContact(phone);
+        
+        // Eh default values add karo taaki Database error na deve
+        p.setUserId(0); // Ya koi valid default user ID
+        p.setDob(new java.sql.Date(System.currentTimeMillis())); // Aaj di date default
+        p.setGender("O");
+        p.setBloodGroup("N/A");
+        
+        return registerPatient(p);
+    }
+
 
     public Patient getPatientByUserId(int userId) throws SQLException {
         String sql = "SELECT * FROM patients WHERE user_id = ?";
