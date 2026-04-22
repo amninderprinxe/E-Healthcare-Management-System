@@ -2,11 +2,20 @@ package pharmacy;
 
 import auth.User;
 import emr.PrescriptionDAO;
-import javafx.collections.*;
-import javafx.geometry.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -160,7 +169,7 @@ public class PharmacistDashboard {
         return box;
     }
 
-    @SuppressWarnings("unchecked")
+    
     private TableView<String[]> makeTable(String[] cols) {
         TableView<String[]> table = new TableView<>();
         for (int i = 0; i < cols.length; i++) {
