@@ -1,19 +1,16 @@
 package auth;
 
 import db.DatabaseConnection;
-import org.mindrot.jbcrypt.BCrypt;
-
 import java.sql.*;
 
 /**
- * Handles user login, logout, registration, and password management.
- * Uses BCrypt for password hashing.
+ * Handles user login using PLAIN TEXT for testing bypass.
  */
 public class AuthService {
 
     private static User currentUser = null;
 
-    // ── Login ──────────────────────────────────────────────────
+    // ── Login (Bypass Hashing) ──────────────────────────────────
     public static User login(String username, String plainPassword) throws Exception {
         Connection conn = DatabaseConnection.getInstance().getConnection();
         String sql = "SELECT * FROM users WHERE username = ? AND is_active = TRUE";
@@ -23,8 +20,10 @@ public class AuthService {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                String storedHash = rs.getString("password");
-                if (BCrypt.checkpw(plainPassword, storedHash)) {
+                String storedPassword = rs.getString("password");
+                
+                // Direct comparison (Bypass BCrypt)
+                if (plainPassword.equals(storedPassword)) {
                     User user = mapResultSet(rs);
                     currentUser = user;
                     return user;
@@ -37,64 +36,15 @@ public class AuthService {
         }
     }
 
-    // ── Logout ─────────────────────────────────────────────────
     public static void logout() {
         currentUser = null;
     }
 
-    // ── Get current logged-in user ─────────────────────────────
     public static User getCurrentUser() {
         return currentUser;
     }
 
-    // ── Register new user ──────────────────────────────────────
-    public static boolean register(String username, String plainPassword,
-                                   String role, String email,
-                                   String fullName, String phone) throws Exception {
-        Connection conn = DatabaseConnection.getInstance().getConnection();
-        String sql = "INSERT INTO users (username, password, role, email, full_name, phone) VALUES (?,?,?,?,?,?)";
-
-        String hashed = BCrypt.hashpw(plainPassword, BCrypt.gensalt(10));
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            ps.setString(2, hashed);
-            ps.setString(3, role);
-            ps.setString(4, email);
-            ps.setString(5, fullName);
-            ps.setString(6, phone);
-            int rows = ps.executeUpdate();
-            return rows > 0;
-        }
-    }
-
-    // ── Change password ────────────────────────────────────────
-    public static boolean changePassword(int userId, String oldPassword, String newPassword) throws Exception {
-        Connection conn = DatabaseConnection.getInstance().getConnection();
-
-        // Verify old password
-        String fetchSql = "SELECT password FROM users WHERE user_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(fetchSql)) {
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                String storedHash = rs.getString("password");
-                if (!BCrypt.checkpw(oldPassword, storedHash)) {
-                    throw new Exception("Old password is incorrect.");
-                }
-            }
-        }
-
-        // Update new password
-        String updateSql = "UPDATE users SET password = ? WHERE user_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
-            ps.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt(10)));
-            ps.setInt(2, userId);
-            return ps.executeUpdate() > 0;
-        }
-    }
-
-    // ── Helper ─────────────────────────────────────────────────
+    // Helper to map Result Set
     private static User mapResultSet(ResultSet rs) throws SQLException {
         return new User(
             rs.getInt("user_id"),
