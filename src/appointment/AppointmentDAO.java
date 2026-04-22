@@ -1,8 +1,9 @@
 package appointment;
-
+import java.sql.Date;
 import db.DatabaseConnection;
 import java.sql.*;
 import java.util.*;
+
 
 // ── DAO ────────────────────────────────────────────────────────────────────────
 public class AppointmentDAO {
